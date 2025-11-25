@@ -108,4 +108,18 @@ class DeviceController extends Controller
         
         return back()->with('error', 'Failed to unlock device');
     }
+
+    /**
+     * Delete device
+     */
+    public function destroy($deviceId)
+    {
+        $success = $this->acsApi->deleteDevice($deviceId);
+        
+        if ($success) {
+            return redirect()->route('devices.index')->with('success', 'Device deleted successfully');
+        }
+        
+        return back()->with('error', 'Failed to delete device');
+    }
 }

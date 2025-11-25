@@ -67,6 +67,9 @@
                             <a href="{{ route('devices.show', $device['device_id']) }}" class="btn btn-primary btn-sm">
                                 View
                             </a>
+                            <button onclick="confirmDelete('{{ $device['device_id'] }}')" class="btn btn-danger btn-sm" style="margin-left: 0.5rem;">
+                                Delete
+                            </button>
                         </td>
                     </tr>
                     @endforeach
@@ -85,7 +88,50 @@
     </div>
 </div>
 
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+    <div style="background: var(--dark-bg-secondary); border-radius: 8px; padding: 2rem; max-width: 400px; width: 90%;">
+        <h3 style="margin: 0 0 1rem; font-size: 1.25rem; font-weight: 600;">Confirm Delete</h3>
+        <p style="color: var(--dark-text-secondary); margin-bottom: 1.5rem;">
+            Are you sure you want to delete this device? This action cannot be undone and will remove all associated data.
+        </p>
+        <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
+            <button onclick="closeDeleteModal()" class="btn btn-secondary">
+                Cancel
+            </button>
+            <button onclick="executeDelete()" class="btn btn-danger">
+                Delete Device
+            </button>
+        </div>
+    </div>
+</div>
+
+<form id="deleteForm" method="POST" style="display: none;">
+    @csrf
+    @method('DELETE')
+</form>
+
 <script>
+let deviceToDelete = null;
+
+function confirmDelete(deviceId) {
+    deviceToDelete = deviceId;
+    document.getElementById('deleteModal').style.display = 'flex';
+}
+
+function closeDeleteModal() {
+    deviceToDelete = null;
+    document.getElementById('deleteModal').style.display = 'none';
+}
+
+function executeDelete() {
+    if (!deviceToDelete) return;
+    
+    const form = document.getElementById('deleteForm');
+    form.action = `/devices/${encodeURIComponent(deviceToDelete)}`;
+    form.submit();
+}
+
 // Client-side search
 document.getElementById('searchInput')?.addEventListener('input', function(e) {
     const searchTerm = e.target.value.toLowerCase();

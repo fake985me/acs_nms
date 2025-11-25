@@ -80,6 +80,12 @@
                     </svg>
                     Lock/Unlock (TODO)
                 </button>
+                <button onclick="confirmDelete('{{ $device['device_id'] }}')" class="btn btn-danger" style="width: 100%; margin-top: 0.75rem;">
+                    <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                    </svg>
+                    Delete Device
+                </button>
             </div>
         </div>
     </div>
@@ -117,6 +123,43 @@
             @endif
         </div>
     </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+        <div style="background: var(--dark-bg-secondary); border-radius: 8px; padding: 2rem; max-width: 400px; width: 90%;">
+            <h3 style="margin: 0 0 1rem; font-size: 1.25rem; font-weight: 600;">Confirm Delete</h3>
+            <p style="color: var(--dark-text-secondary); margin-bottom: 1.5rem;">
+                Are you sure you want to delete device <strong>{{ $device['device_id'] }}</strong>? This action cannot be undone and will remove all associated data.
+            </p>
+            <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
+                <button onclick="closeDeleteModal()" class="btn btn-secondary">
+                    Cancel
+                </button>
+                <button onclick="executeDelete()" class="btn btn-danger">
+                    Delete Device
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <form id="deleteForm" method="POST" action="{{ route('devices.destroy', rawurlencode($device['device_id'])) }}" style="display: none;">
+        @csrf
+        @method('DELETE')
+    </form>
+
+    <script>
+    function confirmDelete(deviceId) {
+        document.getElementById('deleteModal').style.display = 'flex';
+    }
+
+    function closeDeleteModal() {
+        document.getElementById('deleteModal').style.display = 'none';
+    }
+
+    function executeDelete() {
+        document.getElementById('deleteForm').submit();
+    }
+    </script>
 
     @if($latestSignal && $signalHistory->count() > 1)
         <script>

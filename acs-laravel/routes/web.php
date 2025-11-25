@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DeviceController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\DatabaseController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -31,6 +32,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/devices/{deviceId}', [DeviceController::class, 'show'])->name('devices.show');
     Route::post('/devices/{deviceId}/lock', [DeviceController::class, 'lock'])->name('devices.lock');
     Route::post('/devices/{deviceId}/unlock', [DeviceController::class, 'unlock'])->name('devices.unlock');
+    Route::delete('/devices/{deviceId}', [DeviceController::class, 'destroy'])->name('devices.destroy');
     
     // Tasks
     Route::post('/devices/{deviceId}/tasks/reboot', [TaskController::class, 'reboot'])->name('tasks.reboot');
@@ -58,6 +60,21 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Monitoring
     Route::get('/monitoring', [App\Http\Controllers\MonitoringController::class, 'index'])->name('monitoring.index');
     Route::get('/monitoring/metrics', [App\Http\Controllers\MonitoringController::class, 'metrics'])->name('monitoring.metrics');
+    
+    // Database Management
+    Route::get('/database', [DatabaseController::class, 'index'])->name('database.index');
+    Route::get('/database/stats', [DatabaseController::class, 'getStats'])->name('database.stats');
+    Route::post('/database/truncate/{table}', [DatabaseController::class, 'truncate'])->name('database.truncate');
+    Route::get('/database/export/{table}', [DatabaseController::class, 'export'])->name('database.export');
+    Route::post('/database/backup', [DatabaseController::class, 'backup'])->name('database.backup');
+    
+    // Database CRUD
+    Route::get('/database/{table}/view', [DatabaseController::class, 'view'])->name('database.view');
+    Route::get('/database/{table}/create', [DatabaseController::class, 'create'])->name('database.create');
+    Route::post('/database/{table}/store', [DatabaseController::class, 'store'])->name('database.store');
+    Route::get('/database/{table}/{id}/edit', [DatabaseController::class, 'edit'])->name('database.edit');
+    Route::put('/database/{table}/{id}', [DatabaseController::class, 'update'])->name('database.update');
+    Route::delete('/database/{table}/{id}', [DatabaseController::class, 'delete'])->name('database.delete');
     
     // Settings
     Route::get('/settings', [App\Http\Controllers\SettingController::class, 'index'])->name('settings.index');

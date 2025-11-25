@@ -255,6 +255,38 @@ class AcsApiService
     }
 
     /**
+     * Delete device
+     */
+    public function deleteDevice($deviceId)
+    {
+        try {
+            $encodedDeviceId = rawurlencode($deviceId);
+            $response = Http::timeout($this->timeout)
+                ->delete("{$this->baseUrl}/devices/{$encodedDeviceId}");
+
+            if ($response->successful()) {
+                // Clear cache for this device
+                Cache::forget("device.{$deviceId}");
+                Cache::forget("device.{$deviceId}.parameters");
+                Cache::forget("device.{$deviceId}.tasks");
+                
+                return true;
+            }
+
+            Log::error('ACS API Error: Failed to delete device', [
+                'device_id' => $deviceId,
+                'status' => $response->status(),
+                'body' => $response->body()
+            ]);
+
+            return false;
+        } catch (\Exception $e) {
+            Log::error('ACS API Exception: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
      * Get ACS health status
      */
     public function getHealth()
