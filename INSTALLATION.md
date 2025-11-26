@@ -158,6 +158,7 @@ npm start
 ```bash
 cd C:\laragon\www\acs-core\acs-laravel
 php artisan serve
+php artisan serve --host=0.0.0.0 --port=8000
 ```
 
 ✅ **Selesai!** Buka dashboard di: http://localhost:8000

@@ -8,6 +8,11 @@ return new class extends Migration
 {
     public function up(): void
     {
+        if (Schema::hasTable('presets')) {
+        // Kalau tabel sudah ada (misal dari DB lama), jangan buat lagi
+        return;
+    }
+    
         Schema::create('presets', function (Blueprint $table) {
             $table->id();
             $table->string('name');

@@ -7,31 +7,30 @@ use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        // Set first user as superadmin
-        $firstUser = DB::table('users')->orderBy('id')->first();
-        if ($firstUser) {
-            DB::table('users')
-                ->where('id', $firstUser->id)
-                ->update(['role' => 'super_admin']);
+        // Tambah kolom 'role' kalau belum ada
+        if (!Schema::hasColumn('users', 'role')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->string('role')
+                    ->default('admin')
+                    ->after('password'); // sesuaikan kalau kolomnya beda
+            });
         }
-        
-        // Set all other users as admin
+
+        // Set semua user jadi admin (kecuali id 0 kalau ada)
         DB::table('users')
-            ->where('id', '!=', $firstUser ? $firstUser->id : 0)
+            ->where('id', '!=', 0)
             ->update(['role' => 'admin']);
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        // Revert all users to default 'user' role
-        DB::table('users')->update(['role' => 'user']);
+        // Kalau mau aman saat rollback, bisa hapus kolom role
+        if (Schema::hasColumn('users', 'role')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->dropColumn('role');
+            });
+        }
     }
 };

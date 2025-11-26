@@ -311,3 +311,33 @@ php artisan serve
 - [MikroTik Setup](MIKROTIK_SETUP.md) - TR-069 configuration
 - [MikroTik Offline Fix](MIKROTIK_OFFLINE_FIX.md) - Fix offline status
 - [MikroTik Fast Reconnect](MIKROTIK_FAST_RECONNECT.md) - Reduce connection interval
+
+
+## Kalau error invalid ELF
+
+invalid ELF header pada
+/var/www/acs-core/node_modules/sqlite3/build/Release/node_sqlite3.node
+
+```
+   Error: /var/www/acs-core/node_modules/sqlite3/build/Release/node_sqlite3.node: invalid ELF header at Module._extensions..node (node:internal/modules/cjs/loader:1661:18)
+
+```
+```bash
+# Pasang dependency build dulu
+cd /var/www/acs-core
+sudo apt update
+sudo apt install -y build-essential python3 make g++ sqlite3 libsqlite3-dev
+
+# Hapus build lama sqlite3 yang salah
+rm -rf node_modules/sqlite3/build
+
+# Rebuild sqlite3 untuk platform ini
+-- Kita paksa build dari source, supaya nggak download binary siap pakai (yang bisa gagal karena internet/proxy):
+
+npm rebuild sqlite3 --build-from-source
+
+-- Tunggu sampai selesai (akan ada output compile C++ agak panjang).
+-- Kalau ini sukses, coba:
+npm start
+
+

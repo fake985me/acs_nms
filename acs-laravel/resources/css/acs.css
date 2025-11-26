@@ -173,6 +173,9 @@ body {
     flex: 1;
     margin-left: 260px;
     min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: var(--dark-bg);
 }
 
 .topbar {
@@ -547,13 +550,50 @@ tbody tr:hover {
     to { transform: rotate(360deg); }
 }
 
+/* Tombol hamburger di topbar (mobile) */
+.sidebar-toggle-btn {
+    border: none;
+    background: transparent;
+    padding: 0.25rem;
+    border-radius: 999px;
+    display: none;              /* default: desktop disembunyikan */
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--dark-text);
+    transition: var(--transition);
+}
+
+.sidebar-toggle-btn:hover {
+    background: rgba(148, 163, 184, 0.15);
+}
+
+/* Optional: nama user di topbar khusus mobile */
+.topbar-user-name-mobile {
+    display: none;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
+    .app-container {
+        flex-direction: column;
+    }
+
     .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 260px;
+        max-width: 80%;
+        height: 100vh;
         transform: translateX(-100%);
-        transition: transform 0.3s;
+        transition: transform 0.3s ease-out;
+        z-index: 100;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
     }
     
+    /* Sidebar muncul ketika ada class .open */
     .sidebar.open {
         transform: translateX(0);
     }
@@ -561,7 +601,23 @@ tbody tr:hover {
     .main-content {
         margin-left: 0;
     }
-    
+
+    .topbar {
+        padding: var(--spacing-md) var(--spacing-md);
+    }
+
+    /* Tampilkan tombol hamburger di mobile */
+    .sidebar-toggle-btn {
+        display: inline-flex;
+    }
+
+    /* Kalau mau nama user di topbar mobile */
+    .topbar-user-name-mobile {
+        display: inline;
+        color: var(--dark-text-secondary);
+        font-size: 0.875rem;
+    }
+
     .stats-grid {
         grid-template-columns: 1fr;
     }
@@ -569,4 +625,10 @@ tbody tr:hover {
     .grid-2 {
         grid-template-columns: 1fr;
     }
+
+    .content-wrapper {
+        padding: var(--spacing-lg);
+    }
 }
+
+

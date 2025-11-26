@@ -20,6 +20,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body>
+    {{-- Tambah class untuk state sidebar-open di mobile --}}
     <div class="app-container">
         <!-- Sidebar -->
         <aside class="sidebar">
@@ -62,7 +63,7 @@
                     <a href="{{ route('olts.index') }}" class="nav-link {{ request()->routeIs('olts.*') ? 'active' : '' }}">
                         <span class="nav-link-icon">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="20">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 01-2-2m-2-4h.01M17 16h.01"></path>
                             </svg>
                         </span>
                         <span>OLT Management</span>
@@ -154,22 +155,38 @@
             </div>
         </aside>
 
+        {{-- BACKDROP MOBILE (klik buat tutup sidebar) --}}
+        <div class="sidebar-backdrop" onclick="toggleSidebar(false)"></div> <!-- NEW -->
+
         <!-- Main Content -->
         <div class="main-content">
             <header class="topbar">
-                <div class="topbar-left">
-                    <h1 style="font-size: 1.25rem; font-weight: 600; margin: 0;">@yield('title', 'Dashboard')</h1>
-                </div>
+    <div class="topbar-left">
+        {{-- Tombol hamburger, akan muncul hanya di mobile karena CSS --}}
+        <button type="button" class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Toggle sidebar">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="22">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+        </button>
 
-                <div class="topbar-right">
-                    <div style="display: flex; align-items: center; gap: 0.75rem;">
-                        <span style="color: var(--dark-text-secondary); font-size: 0.875rem;">{{ Auth::user()->name }}</span>
-                        <div style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--primary-light)); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">
-                            {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                        </div>
-                    </div>
-                </div>
-            </header>
+        <h1 style="font-size: 1.25rem; font-weight: 600; margin: 0;">
+            @yield('title', 'Dashboard')
+        </h1>
+    </div>
+
+    <div class="topbar-right">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <span class="topbar-user-name-mobile">
+                {{ Auth::user()->name }}
+            </span>
+            <div style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--primary-light)); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">
+                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+            </div>
+        </div>
+    </div>
+</header>
+
 
             <!-- Alerts -->
             @if(session('success'))
@@ -199,16 +216,28 @@
         </div>
     </div>
 
-    <!-- Scripts -->
     <script>
-        // Auto-dismiss alerts after 5 seconds
-        setTimeout(() => {
-            document.querySelectorAll('.alert').forEach(alert => {
-                alert.style.transition = 'opacity 0.3s';
-                alert.style.opacity = '0';
-                setTimeout(() => alert.remove(), 300);
+    // Auto-dismiss alerts after 5 seconds
+    setTimeout(() => {
+        document.querySelectorAll('.alert').forEach(alert => {
+            alert.style.transition = 'opacity 0.3s';
+            alert.style.opacity = '0';
+            setTimeout(() => alert.remove(), 300);
+        });
+    }, 5000);
+
+    // Toggle sidebar di mobile
+    document.addEventListener('DOMContentLoaded', () => {
+        const sidebar = document.querySelector('.sidebar');
+        const toggleBtn = document.getElementById('sidebarToggle');
+
+        if (sidebar && toggleBtn) {
+            toggleBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('open');
             });
-        }, 5000);
-    </script>
+        }
+    });
+</script>
+
 </body>
 </html>
